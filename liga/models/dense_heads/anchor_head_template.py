@@ -12,7 +12,7 @@ from liga.ops.roiaware_pool3d.roiaware_pool3d_utils import points_in_boxes_gpu
 from .target_assigner.anchor_generator import AnchorGenerator
 from .target_assigner.axis_aligned_target_assigner import AxisAlignedTargetAssigner
 
-
+IS_PRINT = (not dist.is_initialized()) or (dist.get_rank() == 0)
 class NormalizeLayer(nn.Module):
     def __init__(self, type, channel, momentum=0.99):
         super().__init__()
@@ -403,7 +403,7 @@ class AnchorHeadTemplate(nn.Module):
             positives = (positives >= 0).view(*anchors_xyz.shape[:3])
         elif imitation_cfg["mode"] == "full":
             positives = features_preds.new_ones(*features_preds.shape[:3])
-            if dist.get_rank() == 0:
+            if IS_PRINT == 0:
                 print("using full imitation mask")
         else:
             raise ValueError("wrong imitation mode")

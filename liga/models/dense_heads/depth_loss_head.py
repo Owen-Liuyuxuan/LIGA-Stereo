@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.distributed as dist
 
+IS_PRINT = (not dist.is_initialized()) or (dist.get_rank() == 0)
 
 class DepthLossHead(nn.Module):
     def __init__(self, model_cfg, point_cloud_range):
@@ -66,7 +67,7 @@ class DepthLossHead(nn.Module):
                         distance = torch.abs(
                             depth_sample.cuda() - gt.unsqueeze(-1))
                         sigma = float(loss_type.split("_")[1])
-                        if dist.get_rank() == 0:
+                        if IS_PRINT:
                             print("depth loss using gaussian normalized", sigma)
                         probability = torch.exp(-0.5 * (distance ** 2) / (sigma ** 2))
                         probability /= torch.clamp(probability.sum(1, keepdim=True), min=1.0)
@@ -77,7 +78,7 @@ class DepthLossHead(nn.Module):
                         distance = torch.abs(
                             depth_sample.cuda() - gt.unsqueeze(-1))
                         sigma = float(loss_type.split("_")[1])
-                        if dist.get_rank() == 0:
+                        if IS_PRINT:
                             print("depth loss using laplacian normalized", sigma)
                         probability = torch.exp(-distance / sigma)
                         probability /= torch.clamp(probability.sum(1, keepdim=True), min=1.0)

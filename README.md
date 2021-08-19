@@ -48,6 +48,7 @@ pip install -r requirements.txt
 
 ```shell
 git clone https://github.com/traveller59/spconv
+cd spconv
 git reset --hard f22dd9
 git submodule update --recursive
 python setup.py bdist_wheel
@@ -100,8 +101,8 @@ ln -s $YOUR_KITTI_DATA_PATH/testing/ ./data/kitti/
 
 * Generate the data infos by running the following command: 
 ```python 
-python -m liga.datasets.kitti.kitti_dataset create_kitti_infos
-python -m liga.datasets.kitti.kitti_dataset create_gt_database_only
+python3 liga/datasets/kitti/lidar_kitti_dataset create_kitti_infos
+python3 liga/datasets/kitti/lidar_kitti_dataset create_gt_database_only
 ```
 
 ### Training & Testing
@@ -120,7 +121,7 @@ python -m liga.datasets.kitti.kitti_dataset create_gt_database_only
 
 * Train with multiple GPUs
 ```shell script
-./scripts/dist_train.sh ${NUM_GPUS} 'exp_name' ./configs/stereo/kitti_models/liga.yaml
+CUDA_VISIBLE_DEVICES=0 ./scripts/dist_train.sh ${NUM_GPUS} 'exp_name' ./configs/stereo/kitti_models/liga.3d-and-bev.yaml
 
 ```
 

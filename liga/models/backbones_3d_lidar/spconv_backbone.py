@@ -7,6 +7,7 @@ import torch.nn as nn
 import warnings
 import torch.distributed as dist
 
+IS_PRINT = (not dist.is_initialized()) or (dist.get_rank() == 0)
 
 def post_act_block(in_channels, out_channels, kernel_size, indice_key=None, stride=1, padding=0,
                    conv_type='subm', norm_fn=None):
@@ -147,7 +148,7 @@ class VoxelBackBone8x(nn.Module):
             batch_size=batch_size
         )
 
-        if voxel_features.shape[-1] != self.input_channels and dist.get_rank() == 0:
+        if voxel_features.shape[-1] != self.input_channels and IS_PRINT == 0:
             warnings.warn(f"shape does not compatible: {voxel_features.shape}, {self.input_channels}")
 
         x = self.conv_input(input_sp_tensor)
@@ -264,7 +265,7 @@ class VoxelBackBone4x(nn.Module):
             batch_size=batch_size
         )
 
-        if voxel_features.shape[-1] != self.input_channels and dist.get_rank() == 0:
+        if voxel_features.shape[-1] != self.input_channels and IS_PRINT == 0:
             warnings.warn(f"shape does not compatible: {voxel_features.shape}, {self.input_channels}")
 
         x = self.conv_input(input_sp_tensor)
@@ -379,7 +380,7 @@ class VoxelBackBone4xNoFinalBnReLU(nn.Module):
             batch_size=batch_size
         )
 
-        if voxel_features.shape[-1] != self.input_channels and dist.get_rank() == 0:
+        if voxel_features.shape[-1] != self.input_channels and IS_PRINT == 0:
             warnings.warn(f"shape does not compatible: {voxel_features.shape}, {self.input_channels}")
 
         x = self.conv_input(input_sp_tensor)
