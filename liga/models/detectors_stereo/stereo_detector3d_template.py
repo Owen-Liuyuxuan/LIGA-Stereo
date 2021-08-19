@@ -71,7 +71,7 @@ class StereoDetector3DTemplate(nn.Module):
         model_info_dict['module_list'].append(lidar_model)
         model_info_dict['fixed_module_list'].append(lidar_model)
 
-        logger = create_logger(rank=dist.get_rank())
+        logger = create_logger(rank=dist.get_rank() if dist.is_initialized() else 0)
         if self.model_cfg.LIDAR_MODEL.PRETRAINED_MODEL:
             lidar_model.load_params_from_file(
                 filename=self.model_cfg.LIDAR_MODEL.PRETRAINED_MODEL, to_cpu=True, logger=logger)
